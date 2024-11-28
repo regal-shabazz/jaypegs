@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: 'Urbanist';
+}
+
+body {
+  background-color: rgb(62, 62, 62);
+  background-image: linear-gradient( rgb(33, 32, 32), rgb(213, 211, 211));
+}
+
+.container {
+  width: 90%;
+  max-width: 1440px;
+  margin-inline: auto;
+}
+
+img {
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+}

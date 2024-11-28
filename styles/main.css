@@ -1,0 +1,79 @@
+.gallery i {
+  font-size: 1.2rem;
+  color: white;
+}
+
+main .container {
+  padding-top: 250px;
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gallery .images {
+  columns: 5 270px;
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.images .cards {
+  margin-bottom: 10px;
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+ 
+}
+
+.images .details {
+  position: absolute;
+  bottom: -100px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  color: white; 
+  transition: bottom .45s ease;
+}
+
+.images .cards:hover .details {
+  bottom: 0px;
+}
+
+.images .photographer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* .photographer-name {
+  font-size: 1.3rem;
+} */
+
+.gallery .load-more {
+  margin-block: 50px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgb(105, 105, 208);
+  border: none;
+  color: white;
+}
+
+.gallery .load-more:hover {
+  background-color: blue;
+}
+
+.download-btn {
+  padding: 5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
