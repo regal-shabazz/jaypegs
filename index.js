@@ -1,163 +1,207 @@
+const UNSPLASH_ACCESS_KEY = 'wN6E8FS_1VQxFsREVwjzGyRE4beUFzzvvkVEQahu1_w'
 
-const accessKey = 'wN6E8FS_1VQxFsREVwjzGyRE4beUFzzvvkVEQahu1_w'
+const searchBox = document.querySelector('.header-input-field');
+let isSearching = false;
 
+const imagesContainer = document.querySelector('.images-container')
+let currentPage = 1;
+const loadMoreBtn = document.querySelector('.load-more-btn')
+const imageCache = new Map();
 
-const searchInput = document.querySelector('.header.search-input');
-const gallery = document.querySelector('.gallery .images');
-const loadMoreButton = document.querySelector('.load-more');
-
-let query = ''; 
-let page = 1;  
-
-
-async function fetchImages(searchQuery = '', pageNumber = 1) {
-  const url = searchQuery 
-    ? `https://api.unsplash.com/search/photos?query=${searchQuery}&page=${pageNumber}&per_page=12&client_id=${accessKey}`
-    : `https://api.unsplash.com/photos?page=${pageNumber}&per_page=12&client_id=${accessKey}`;
-
+async function fetchImages() {
   try {
-    const response = await fetch(url);
+
+    if (imageCache.has(currentPage)) {
+      console.log("Using cached data");
+      renderImages(imageCache.get(currentPage));
+      return;
+    }
+
+    const response = await fetch(`https://api.unsplash.com/photos?page=${currentPage}&client_id=${UNSPLASH_ACCESS_KEY}`)
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch images");
+    }
+
     const data = await response.json();
-    return searchQuery ? data.results : data; 
+
+    imageCache.set(currentPage, data);
+
+    if (data.length === 0) {
+      loadMoreBtn.style.display = "none";
+      return; 
+    }
+
+    renderImages(data);
   } catch (error) {
-    console.error('Error fetching images:', error);
-    return [];
-  }
+    console.error("Error fetching images:", error)
+  }  
 }
 
 
 
 function renderImages(images) {
-  const imageCards = images.map(image => `
-    <li class="cards">
-      <img src="${image.urls.small}" 
-      alt="${image.alt_description || 'Image'}"
-      data-large="${image.urls.full}" 
-      data-photographer="${image.user.name}" 
-      data-download="${image.links.download_location}"  />
-      <div class="details">
-        <div class="photographer">
+  images.forEach(image => {
+    const imageCard = document.createElement('li');
+    imageCard.classList.add('image-card')
+
+    imageCard.innerHTML = `
+    <img src="${image.urls.small}" alt="${image.alt_description || "Unsplash Image"}" />
+    <div class="details-n-utilities">
+        <div class="image-author">
           <i class="fa-solid fa-camera"></i>
-          <span>PC:</span>
-          <span class="photographer-name">${image.user.name}</span>
+          <p>${image.user.name}</p>
         </div>
-        <button class="download-btn" data-download="${image.links.download_location}">
-          <i class="fa-solid fa-download"></i>
-        </button>
+        <div class="utilities">
+          <button class="download-btn">
+            <i class="fa-solid fa-download"></i>
+          </button>
+        </div>
       </div>
-    </li>
-  `).join('');
-  gallery.innerHTML += imageCards;
+    `
 
-  const downloadButtons = document.querySelectorAll('.download-btn');
-  downloadButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const downloadLocation = button.getAttribute('data-download');
-      openInNewTab(downloadLocation);
+    imageCard.querySelector('img').addEventListener('click', () => {
+      createModal(image); // Pass the image data to create the modal
     });
+
+ // Add event listener to the download button
+ const downloadBtn = imageCard.querySelector('.download-btn');
+ downloadBtn.addEventListener('click', () => {
+   downloadImage(image.urls.full, image.alt_description || "download");
+ });
+
+
+    imagesContainer.appendChild(imageCard);
   });
+}
 
+function downloadImage(url, filename) {
+  // Create a temporary anchor element
+  const a = document.createElement('a');
+  a.href = url; // Set the image URL as the anchor's href
+  a.target = '_blank'; // Ensure it opens in a new tab if needed
+  a.download = `${filename}.jpg`; // Set the filename
 
-const galleryImages = document.querySelectorAll('.gallery .cards img');
-const modal = document.querySelector('.modal');
-const modalImage = modal.querySelector('.preview-image img');
-const modalPhotographerName = modal.querySelector('.photographer-name');
-const modalDownloadButton = modal.querySelector('.fa-download');
-const modalCloseButton = modal.querySelector('.fa-times');
+  // Append the anchor to the document body
+  document.body.appendChild(a);
 
-galleryImages.forEach(image => {
-  image.addEventListener('click', () => {
-    const largeImageUrl = image.getAttribute('data-large'); 
-    const photographerName = image.getAttribute('data-photographer'); 
-    const downloadLink = image.getAttribute('data-download'); 
+  // Programmatically trigger the download
+  a.click();
 
-    // Set modal content
-    modalImage.src = largeImageUrl;
-    modalPhotographerName.textContent = photographerName;
-    modalDownloadButton.setAttribute('data-download', downloadLink);
+  // Remove the anchor from the DOM
+  document.body.removeChild(a);
+}
 
-    // Show the modal
-    modal.style.display = 'block';
-  });
-});
+async function searchImages(query) {
+  try {
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos?query=${query}&page=${currentPage}&per_page=10&client_id=${UNSPLASH_ACCESS_KEY}`
+    );
 
-// Close the modal
-modalCloseButton.addEventListener('click', () => {
-  modal.style.display = 'none'; // Hide the modal
-});
+    if (!response.ok) {
+      throw new Error("Failed to fetch search results");
+    }
 
-// Close the modal when clicking outside the container
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.style.display = 'none';
+    const data = await response.json();
+
+    if (data.results.length === 0) {
+      loadMoreBtn.style.display = "none";
+      alert("No results found for your search!");
+      return;
+    }
+
+    renderImages(data.results);
+  } catch (error) {
+    console.error("Error searching images:", error);
+    alert("An error occurred while fetching search results.");
+  }
+}
+
+// Handle search input
+searchBox.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter' && searchBox.value.trim() !== '') {
+    const query = searchBox.value.trim();
+    imagesContainer.innerHTML = ''; // Clear current images
+    currentPage = 1; // Reset to first page
+    isSearching = true; // Enable search mode
+    searchImages(query);
   }
 });
 
-// Handle download button click
-modalDownloadButton.addEventListener('click', () => {
-  const downloadLink = modalDownloadButton.getAttribute('data-download'); // Get the download URL
-  openDownload(downloadLink); // Open the download in a new tab
-});
-
-function openDownload(downloadLocation) {
-  const url = `${downloadLocation}&client_id=${accessKey}`; // Use download location URL
-
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch download URL');
-      }
-      return response.json();
-    })
-    .then(data => {
-      // `data.url` contains the actual image download URL
-      window.open(data.url, '_blank'); // Open the download link in a new tab
-    })
-    .catch(error => console.error('Error downloading image:', error));
-}
 
 
-}
+document.addEventListener("DOMContentLoaded", fetchImages);
 
-
-
-// Open URL in a new tab
-function openInNewTab(downloadLocation) {
-  const url = `${downloadLocation}&client_id=${accessKey}`;
-  
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch download URL');
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Open the actual image URL in a new tab
-      window.open(data.url, '_blank');
-    })
-    .catch(error => console.error('Error opening download link:', error));
-}
-
-
-
-// Handle Search
-searchInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    query = searchInput.value.trim();
-    page = 1; // Reset to first page
-    gallery.innerHTML = ''; // Clear gallery
-    fetchImages(query, page).then(renderImages);
+loadMoreBtn.addEventListener('click', () => {
+  currentPage++;
+  if (isSearching) {
+    const query = searchBox.value.trim();
+    searchImages(query);
+  } else {
+    fetchImages();
   }
-});
+})
 
-// Handle "Load More" Button
-loadMoreButton.addEventListener('click', () => {
-  page++; // Increment page
-  fetchImages(query, page).then(renderImages);
-});
+function createModal(image) {
+  // Create modal structure
+  const modal = document.createElement('div');
+  modal.classList.add('modal'); // Add a modal class
 
+  modal.innerHTML = `
+    <div class="container">
+      <div class="details-n-utilities">
+        <div class="image-author">
+          <i class="fa-solid fa-camera"></i>
+          <p>${image.user.name}</p>
+        </div>
+        <div class="utilities">
+          <button class="download-btn">
+            <i class="fa-solid fa-download"></i>
+          </button>
+          <button class="close-btn">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="modal-image">
+        <img src="${image.urls.regular}" alt="${image.alt_description || "Modal Image"}" />
+      </div>
+    </div>
+  `;
 
+  // Append the modal to the body
+  document.body.appendChild(modal);
 
-// Initial Load
-fetchImages().then(renderImages);
+  // Add event listener to close the modal when the close button is clicked
+  const closeBtn = modal.querySelector('.close-btn');
+  closeBtn.addEventListener('click', () => {
+    modal.remove(); // Remove the modal when closed
+  });
+
+  // Optionally, close the modal if the user clicks outside the modal container
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+
+ // Handle download button click
+ const downloadBtn = modal.querySelector('.download-btn');
+ downloadBtn.addEventListener('click', () => {
+   // Create an <a> tag for downloading the image
+   const a = document.createElement('a');
+   a.href = image.urls.full; // Use the full-size image URL
+   a.target = '_blank'; // Make sure the download happens in a new tab
+   a.download = `${image.alt_description || "download"}.jpg`; // Set the file name for download
+
+   // Append the <a> element to the DOM temporarily
+   document.body.appendChild(a);
+
+   // Trigger the download by clicking the <a> element programmatically
+   a.click();
+
+   // Remove the <a> element after the download is triggered
+   document.body.removeChild(a);
+ });
+}
+

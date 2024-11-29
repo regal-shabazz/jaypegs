@@ -18,95 +18,42 @@
     <link rel="stylesheet" href="./styles/styles.css" />
     <link rel="stylesheet" href="./styles/header.css" />
     <link rel="stylesheet" href="./styles/main.css" />
-    <link rel="stylesheet" href="./styles/modal.css">
+    <link rel="stylesheet" href="./styles/modal.css" />
     <script src="./index.js" defer></script>
   </head>
   <body>
     <header>
       <div class="container">
-        <!-- header text content -->
-        <div class="heading">
-          <h1>JAYPEGS</h1>
-          <p class="subheading">...curated for your inspiration</p>
+        <div class="header-text-content">
+          <div class="headings">
+            <h1 class="main-heading">JAYPEGS</h1>
+            <p class="subheading">...curated for your inspiration</p>
+          </div>
         </div>
-
-        <!-- search box -->
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input
-            type="text"
-            placeholder="Search images"
-            class="header search-input"
-          />
+        <div class="header-utility">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="text"
+              class="header-input-field"
+              placeholder="Search images"
+            />
+          </div>
         </div>
       </div>
     </header>
+
+    <!-- main -->
+
     <main>
-      <!-- modal -->
-      <div class="modal">
-         <div class="container">
-            <div class="header">
-              <div class="photographer">
-                <i class="fa-solid fa-camera"></i>
-                <span>PC:</span>
-                <span class="photographer-name">Jibola Ayeni</span>
-              </div>
-              <div class="buttons">
-                <i class="fa-solid fa-download download-btn"></i>
-                <i class="fa-solid fa-times"></i>
-              </div>
-            </div>
-            <div class="preview-image">
-              <div class="image">
-                <img src="./images/image-5.jpg" alt="preview image">
-              </div>
-            </div>
-         </div>
-      </div>
-      <!--  -->
       <div class="container">
-        <div class="gallery">
-          <ul class="images">
-            <!-- <li class="cards">
-              <img src="./images/image-5.jpg"  alt="images" />
-              <div class="details">
-                <div class="photographer">
-                  <i class="fa-solid fa-camera"></i>
-                  <span>PC:</span>
-                  <span class="photographer-name">Jibola Ayeni</span>
-                </div>
-                <button class="download-btn"><i class="fa-solid fa-download"></i></button>
-              </div>
-            </li>
-            <li class="cards">
-              <img src="./images/image-3.jpg"  alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-2.jpg"  alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-4.jpg"  alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-9.jpg"  alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-10.jpg"  alt="images" />
-            </li>
-            <li class="cards" >
-              <img src="./images/image-2.jpg" alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-8.jpg"  alt="images" />
-            </li>
-            <li class="cards" >
-              <img src="./images/image-1.jpg" alt="images" />
-            </li>
-            <li class="cards">
-              <img src="./images/image-6.jpg"  alt="images" />
-            </li> -->
+        <section class="gallery">
+          <ul class="images-container">
+        
           </ul>
-          <button class="load-more">Load More</button>
+        </section>
+        <div class="load-more-btn">
+          <button>Load More</button>
         </div>
       </div>
     </main>

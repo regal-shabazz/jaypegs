@@ -1,79 +1,135 @@
-.gallery i {
-  font-size: 1.2rem;
-  color: white;
-}
-
 main .container {
   padding-top: 250px;
+  width: 100%;
+}
+
+main img {
+  width: 100%;
+  margin-inline: auto;
+  display: block;
+  max-height: 400px;
+  object-fit: cover;
 }
 
 .gallery {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding-bottom: 50px;
 }
 
-.gallery .images {
-  columns: 5 270px;
-  gap: 10px;
-  margin-top: 40px;
+.images-container {
+  columns: 5 250px;
+  gap: 15px;
 }
 
-.images .cards {
-  margin-bottom: 10px;
-  border-radius: 5px;
+.images-container .image-card {
+  width: 100%;
   position: relative;
+  margin-bottom: 35px;
   cursor: pointer;
   overflow: hidden;
+  position: relative;
  
 }
 
-.images .details {
+.image-card::before {
+  content: "Click to enlarge";
+  width: max-content;
+  height: auto;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
   position: absolute;
-  bottom: -100px;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 15px 20px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
-  color: white; 
-  transition: bottom .45s ease;
-}
-
-.images .cards:hover .details {
-  bottom: 0px;
-}
-
-.images .photographer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* .photographer-name {
-  font-size: 1.3rem;
-} */
-
-.gallery .load-more {
-  margin-block: 50px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: rgb(105, 105, 208);
-  border: none;
   color: white;
-}
-
-.gallery .load-more:hover {
-  background-color: blue;
-}
-
-.download-btn {
+  background-color: rgba(0, 0, 0, 0.616);
   padding: 5px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  transition: top 0.45s ease;
+}
+
+.details-n-utilities {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  color: rgb(222, 219, 219);
+  transition: bottom 0.45s ease;
+  padding: 10px;
+  z-index: 3;
+}
+
+.load-more-btn {
+  padding: 20px;
+}
+
+.load-more-btn button {
+  margin-inline: auto;
+  border: 1px solid;
+  display: block;
+  padding: 10px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  background-color: blueviolet;
+}
+
+.load-more-btn button:hover {
+  background-color: rgb(90, 21, 155);
+}
+
+@media screen and (min-width: 900px) {
+  .image-card::before {
+    content: "Click to enlarge";
+    width: max-content;
+    height: auto;
+    top: -50px;
+    left: 10px;
+    z-index: 1;
+    position: absolute;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.616);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.7rem;
+    transition: top 0.45s ease;
+  }
+
+  .details-n-utilities {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    position: absolute;
+    bottom: -100px;
+    width: 100%;
+    background-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1),
+      rgba(0, 0, 0, 0)
+    );
+    color: rgb(222, 219, 219);
+    transition: bottom 0.45s ease;
+    padding: 10px;
+    z-index: 3;
+  }
+
+  .image-card {
+    transition: .45s ease;
+    border-radius: 5px;
+  }
+
+  .image-card:hover {
+    transform: scale(1.05);
+  }
+
+  .image-card:hover .details-n-utilities {
+    bottom: 0;
+    z-index: 3;
+  }
+
+  .image-card:hover::before {
+    top: 10px;
+  }
 }
